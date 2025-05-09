@@ -11,7 +11,7 @@ header('Content-Type: text/html; charset=utf-8');
 printf('Hello %s', htmlspecialchars($name, ENT_QUOTES, 'UTF-8'));
 */
 ?>
-<?php 
+<?php /* v 0.0.3
 require_once __DIR__.'/vendor/autoload.php';
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,4 +22,13 @@ $name = $request->query->get('name','World');
 $response = new Response(sprintf('Hello %s',htmlspecialchars($name,ENT_QUOTES,'utf-8')));
 
 $response->send();
+*/
+?>
+<?php /* v 0.0.4
+require_once __DIR__.'/init.php';
+$name = $request->query->get('name', 'World');
+
+$response->setContent(sprintf('Hello %s', htmlspecialchars($name,ENT_QUOTES,'utf-8')));
+$response->send();
+*/
 ?>
