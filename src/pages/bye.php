@@ -19,5 +19,6 @@ $response->send();
 */
 ?>
 <?php
-$response->setContent('Goodbye!');
+//$response->setContent('Goodbye!');
 ?>
+Goodbye!!
