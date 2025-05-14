@@ -12,6 +12,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing;
 
+function render_template($request)
+{
+    // https://www.php.net/manual/zh/function.extract.php
+    // 提取请求数据
+    extract($request->attributes->all(), EXTR_SKIP);
+    ob_start();
+    // 匹配到的路由保存在$_route变量中
+    include sprintf(__DIR__.'/../src/pages/%s.php', $_route);
+    
+    return new Response(ob_get_clean());
+}
+
 $request = Request::createFromGlobals();
 // 路由配置
 $routes = include __DIR__.'/../src/app.php';
@@ -22,13 +34,9 @@ $context->fromRequest($request);
 $matcher = new Routing\Matcher\UrlMatcher($routes, $context);
 
 try {
-    // https://www.php.net/manual/zh/function.extract.php
-    // 提取请求数据
-    extract($matcher->match($request->getPathInfo()), EXTR_SKIP);
-    ob_start();
-    include sprintf(__DIR__.'/../src/pages/%s.php', $_route);
+    $request->attributes->add($matcher->match($request->getPathInfo()));
 
-    $response = new Response(ob_get_clean());
+    $response = call_user_func($request->attributes->get('_controller'), $request);
 } catch (Routing\Exception\ResourceNotFoundException $exception) {
     $response = new Response('Not Found', 404);
 } catch (Exception $exception) {
